@@ -7,7 +7,7 @@ import (
 )
 
 func TestScrapeWebsite(t *testing.T) {
-	c, err := ScrapeWebsite("https://www.buyrentkenya.com/houses-for-rent/", "tests.csv")
+	c, err := ScrapeWebsite("https://www.buyrentkenya.com/houses-for-rent/", "tests.csv", 1)
 
 	if err != nil {
 		t.Fail()

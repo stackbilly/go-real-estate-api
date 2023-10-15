@@ -96,7 +96,7 @@ func WriteToCSV(filename string, houses []House) error {
 	return nil
 }
 
-func ScrapeWebsite(url string, filename string) (colly.Collector, error) {
+func ScrapeWebsite(url string, filename string, limit int) (colly.Collector, error) {
 	//scraper configurations
 	c := colly.NewCollector(colly.Async(true))
 
@@ -115,8 +115,7 @@ func ScrapeWebsite(url string, filename string) (colly.Collector, error) {
 	pageToScrape := url
 	pagesDiscovered := []string{pageToScrape}
 
-	i := 1     //current iteration
-	limit := 1 //page limit to scrape
+	i := 1 //current iteration
 
 	c.OnHTML("a.relative", func(e *colly.HTMLElement) {
 		newPaginationLink := e.Attr("href")
@@ -174,7 +173,8 @@ func ScrapeWebsite(url string, filename string) (colly.Collector, error) {
 }
 
 func main() {
-	_, err := ScrapeWebsite("https://www.buyrentkenya.com/houses-for-rent/", "houses.csv")
+	_, err := ScrapeWebsite("https://www.buyrentkenya.com/houses-for-rent/",
+		"houses.csv", 110)
 	if err != nil {
 		panic(err)
 		return
