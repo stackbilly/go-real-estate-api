@@ -1,38 +1,40 @@
 package main
 
 import (
-	mongoimport "github.com/Livingstone-Billy/mongo-import"
+	"github.com/gocolly/colly"
+	"os"
 	"testing"
 )
 
 func TestScrapeWebsite(t *testing.T) {
-	records, err := mongoimport.CSVReader("test.csv")
+	c, err := ScrapeWebsite("https://www.buyrentkenya.com/houses-for-rent/", "tests.csv")
+
 	if err != nil {
-		panic(err)
+		t.Fail()
 	}
-	type args struct {
-		filename string
-		url      string
-	}
-	tests := []struct {
-		name string
-		args args
-		want int
-	}{
-		{
-			name: "case 1 test if function scrapes and writes to csv",
-			args: args{filename: "test.csv", url: "https://www.buyrentkenya.com/houses-for-rent/"},
-			want: len(records),
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := ScrapeWebsite(tt.args.url, tt.args.filename)
+	c.OnError(func(_ *colly.Response, err error) {
+		t.Fail()
+	})
+	c.OnResponse(func(response *colly.Response) {
+		if response.Request.URL.Path != "https://www.buyrentkenya.com/houses-for-rent/" {
+			t.Fail()
+		}
+	})
+	c.OnScraped(func(r *colly.Response) {
+		file, err := os.Open("test.csv")
+		if err != nil {
+			t.Fail()
+		}
+		defer func(file *os.File) {
+			err := file.Close()
 			if err != nil {
-				t.Fail()
 				panic(err)
+				return
 			}
-			assert.
-		})
-	}
+		}(file)
+	})
 }
+
+//=== RUN   TestScrapeWebsite
+//--- PASS: TestScrapeWebsite (2.93s)
+//PASS

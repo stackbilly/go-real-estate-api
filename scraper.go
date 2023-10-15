@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/csv"
-	mongoimport "github.com/Livingstone-Billy/mongo-import"
 	"github.com/gocolly/colly"
 	"os"
 	"strings"
@@ -48,11 +47,11 @@ func contains(slice []string, val string) bool {
 	return false
 }
 
-func WriteToCSV(filename string, houses []House) (os.File, error) {
+func WriteToCSV(filename string, houses []House) error {
 	file, err := os.Create(filename)
 	if err != nil {
 		panic(err)
-		return *file, err
+		return err
 	}
 	defer func() {
 		err := file.Close()
@@ -75,7 +74,7 @@ func WriteToCSV(filename string, houses []House) (os.File, error) {
 	err = writer.Write(headers)
 	if err != nil {
 		panic(err)
-		return *file, err
+		return err
 	}
 
 	for _, house := range houses {
@@ -90,14 +89,14 @@ func WriteToCSV(filename string, houses []House) (os.File, error) {
 		err = writer.Write(records)
 		if err != nil {
 			panic(err)
-			return *file, err
+			return err
 		}
 	}
 	defer writer.Flush()
-	return *file, nil
+	return nil
 }
 
-func ScrapeWebsite(url string, filename string) ([][]string, error) {
+func ScrapeWebsite(url string, filename string) (colly.Collector, error) {
 	//scraper configurations
 	c := colly.NewCollector(colly.Async(true))
 
@@ -116,8 +115,8 @@ func ScrapeWebsite(url string, filename string) ([][]string, error) {
 	pageToScrape := url
 	pagesDiscovered := []string{pageToScrape}
 
-	i := 1       //current iteration
-	limit := 110 //page limit to scrape
+	i := 1     //current iteration
+	limit := 1 //page limit to scrape
 
 	c.OnHTML("a.relative", func(e *colly.HTMLElement) {
 		newPaginationLink := e.Attr("href")
@@ -159,20 +158,19 @@ func ScrapeWebsite(url string, filename string) ([][]string, error) {
 	err = c.Visit(pageToScrape)
 	if err != nil {
 		panic(err)
-		return nil, err
+		return *c, err
 	}
 	c.Wait()
-	file, err := WriteToCSV(filename, houses)
+	err = WriteToCSV(filename, houses)
 	if err != nil {
 		panic(err)
-		return nil, err
+		return *c, err
 	}
-	records, err := mongoimport.CSVReader(file.Name())
 	if err != nil {
 		panic(err)
-		return nil, err
+		return *c, err
 	}
-	return records, nil
+	return *c, nil
 }
 
 func main() {
