@@ -96,7 +96,7 @@ func WriteToCSV(filename string, houses []House) error {
 	return nil
 }
 
-func ScrapeWebsite() error {
+func ScrapeWebsite(url string, filename string) error {
 	//scraper configurations
 	c := colly.NewCollector(colly.Async(true))
 
@@ -112,7 +112,7 @@ func ScrapeWebsite() error {
 		panic(err)
 	}
 	var pagesToScrape []string
-	pageToScrape := "https://www.buyrentkenya.com/houses-for-rent/"
+	pageToScrape := url
 	pagesDiscovered := []string{pageToScrape}
 
 	i := 1       //current iteration
@@ -161,7 +161,7 @@ func ScrapeWebsite() error {
 		return err
 	}
 	c.Wait()
-	err = WriteToCSV("houses.csv", houses)
+	err = WriteToCSV(filename, houses)
 	if err != nil {
 		panic(err)
 		return err
@@ -170,7 +170,7 @@ func ScrapeWebsite() error {
 }
 
 func main() {
-	err := ScrapeWebsite()
+	err := ScrapeWebsite("https://www.buyrentkenya.com/houses-for-rent/", "houses.csv")
 	if err != nil {
 		panic(err)
 		return
