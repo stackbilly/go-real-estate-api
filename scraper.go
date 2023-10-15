@@ -171,12 +171,3 @@ func ScrapeWebsite(url string, filename string, limit int) (colly.Collector, err
 	}
 	return *c, nil
 }
-
-func main() {
-	_, err := ScrapeWebsite("https://www.buyrentkenya.com/houses-for-rent/",
-		"houses.csv", 110)
-	if err != nil {
-		panic(err)
-		return
-	}
-}
