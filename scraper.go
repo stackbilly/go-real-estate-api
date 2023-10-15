@@ -23,9 +23,39 @@ func splitString(substrings string, index int) string {
 	return subs[index]
 }
 
+func contains(slice []string, val string) bool {
+	for _, key := range slice {
+		if val == key {
+			return true
+		} else {
+			return false
+		}
+	}
+	return false
+}
+
 func main() {
 	c := colly.NewCollector()
 
+	var pagesToScrape []string
+	pageToScrape := "https://www.buyrentkenya.com/houses-for-rent?page=1"
+	pagesDiscovered := []string{pageToScrape}
+	//current iteration
+	i := 1
+	//max pages to scrap
+	limit := 5
+	c.OnHTML("li.page-item", func(e *colly.HTMLElement) {
+		newPaginationLink := e.Attr("href")
+
+		//if page discovered is new
+		if !contains(pagesToScrape, newPaginationLink) {
+			//if the page discovered should be scraped
+			if !contains(pagesDiscovered, newPaginationLink) {
+				pagesToScrape = append(pagesToScrape, newPaginationLink)
+			}
+			pagesDiscovered = append(pagesDiscovered, newPaginationLink)
+		}
+	})
 	c.OnHTML(".listing-card", func(e *colly.HTMLElement) {
 		house := House{}
 		house.Name = splitString(e.ChildText("span"), 1)
@@ -38,7 +68,21 @@ func main() {
 		houses = append(houses, house)
 	})
 
-	err := c.Visit("https://www.buyrentkenya.com/houses-for-rent")
+	c.OnScraped(func(response *colly.Response) {
+		if len(pagesToScrape) != 0 && i < limit {
+			//get current page to scrape and remove it from list
+			pageToScrape = pagesToScrape[0]
+			pagesToScrape = pagesToScrape[1:]
+			i++
+			err := c.Visit(pageToScrape)
+			if err != nil {
+				panic(err)
+				return
+			}
+		}
+	})
+
+	err := c.Visit(pageToScrape)
 	if err != nil {
 		panic(err)
 	}
