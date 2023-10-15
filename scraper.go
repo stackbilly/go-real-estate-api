@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"github.com/gocolly/colly"
 	"os"
+	"strings"
 )
 
 type House struct {
@@ -17,15 +18,20 @@ type House struct {
 
 var houses []House
 
+func splitString(substrings string, index int) string {
+	subs := strings.Split(substrings, "\n")
+	return subs[index]
+}
+
 func main() {
 	c := colly.NewCollector()
 
 	c.OnHTML(".listing-card", func(e *colly.HTMLElement) {
 		house := House{}
-		house.Name = e.ChildText(".hide-title")
-		house.Location = e.ChildText("p")
-		house.Description = e.ChildText(".text-md")
-		house.Price = e.ChildText("p")
+		house.Name = splitString(e.ChildText("span"), 1)
+		house.Location = e.ChildText(".ml-1")
+		house.Description = splitString(e.ChildText(".mb-3"), 0)
+		house.Price = splitString(e.ChildText(".text-xl"), 0)
 		house.Url = e.ChildAttr("a", "href")
 		house.Img = e.ChildAttr("img", "src")
 
