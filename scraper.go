@@ -96,12 +96,10 @@ func WriteToCSV(filename string, houses []House) error {
 	return nil
 }
 
-func main() {
-	c := colly.NewCollector(
-		colly.Async(true),
-	)
+func ScrapeWebsite() error {
+	//scraper configurations
+	c := colly.NewCollector(colly.Async(true))
 
-	// setting  User-Agent header
 	c.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
 
 	c.DisableCookies()
@@ -112,28 +110,25 @@ func main() {
 	})
 	if err != nil {
 		panic(err)
-		return
 	}
-
 	var pagesToScrape []string
 	pageToScrape := "https://www.buyrentkenya.com/houses-for-rent/"
 	pagesDiscovered := []string{pageToScrape}
-	//current iteration
-	i := 1
-	//max pages to scrap
-	limit := 110
+
+	i := 1       //current iteration
+	limit := 110 //page limit to scrape
+
 	c.OnHTML("a.relative", func(e *colly.HTMLElement) {
 		newPaginationLink := e.Attr("href")
-
 		//if page discovered is new
 		if !contains(pagesToScrape, newPaginationLink) {
-			//if the page discovered should be scraped
 			if !contains(pagesDiscovered, newPaginationLink) {
 				pagesToScrape = append(pagesToScrape, newPaginationLink)
 			}
 			pagesDiscovered = append(pagesDiscovered, newPaginationLink)
 		}
 	})
+
 	c.OnHTML(".listing-card", func(e *colly.HTMLElement) {
 		house := House{}
 		house.Name = formatName(e.ChildText("span"))
@@ -159,12 +154,23 @@ func main() {
 			}
 		}
 	})
+
 	err = c.Visit(pageToScrape)
 	if err != nil {
 		panic(err)
+		return err
 	}
 	c.Wait()
 	err = WriteToCSV("houses.csv", houses)
+	if err != nil {
+		panic(err)
+		return err
+	}
+	return nil
+}
+
+func main() {
+	err := ScrapeWebsite()
 	if err != nil {
 		panic(err)
 		return
