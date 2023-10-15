@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/csv"
+	mongoimport "github.com/Livingstone-Billy/mongo-import"
 	"github.com/gocolly/colly"
 	"os"
 	"strings"
@@ -47,11 +48,11 @@ func contains(slice []string, val string) bool {
 	return false
 }
 
-func WriteToCSV(filename string, houses []House) error {
+func WriteToCSV(filename string, houses []House) (os.File, error) {
 	file, err := os.Create(filename)
 	if err != nil {
 		panic(err)
-		return err
+		return *file, err
 	}
 	defer func() {
 		err := file.Close()
@@ -74,7 +75,7 @@ func WriteToCSV(filename string, houses []House) error {
 	err = writer.Write(headers)
 	if err != nil {
 		panic(err)
-		return err
+		return *file, err
 	}
 
 	for _, house := range houses {
@@ -89,14 +90,14 @@ func WriteToCSV(filename string, houses []House) error {
 		err = writer.Write(records)
 		if err != nil {
 			panic(err)
-			return err
+			return *file, err
 		}
 	}
 	defer writer.Flush()
-	return nil
+	return *file, nil
 }
 
-func ScrapeWebsite(url string, filename string) error {
+func ScrapeWebsite(url string, filename string) ([][]string, error) {
 	//scraper configurations
 	c := colly.NewCollector(colly.Async(true))
 
@@ -158,19 +159,24 @@ func ScrapeWebsite(url string, filename string) error {
 	err = c.Visit(pageToScrape)
 	if err != nil {
 		panic(err)
-		return err
+		return nil, err
 	}
 	c.Wait()
-	err = WriteToCSV(filename, houses)
+	file, err := WriteToCSV(filename, houses)
 	if err != nil {
 		panic(err)
-		return err
+		return nil, err
 	}
-	return nil
+	records, err := mongoimport.CSVReader(file.Name())
+	if err != nil {
+		panic(err)
+		return nil, err
+	}
+	return records, nil
 }
 
 func main() {
-	err := ScrapeWebsite("https://www.buyrentkenya.com/houses-for-rent/", "houses.csv")
+	_, err := ScrapeWebsite("https://www.buyrentkenya.com/houses-for-rent/", "houses.csv")
 	if err != nil {
 		panic(err)
 		return
