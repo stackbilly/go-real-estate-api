@@ -18,9 +18,22 @@ type House struct {
 
 var houses []House
 
-func splitString(substrings string, index int) string {
-	subs := strings.Split(substrings, "\n")
-	return subs[index]
+func formatName(name string) string {
+	var vSubs []string
+	if strings.Compare(strings.Split(name, " ")[0], "Added") == 0 {
+		subs := strings.Split(name, "\n")
+		return subs[2]
+	} else {
+		vSubs = strings.Split(name, "\n")
+		return vSubs[1]
+	}
+}
+
+func splitString(substrings string) string {
+	var subs []string
+
+	subs = strings.Split(substrings, "\n")
+	return subs[0]
 }
 
 func contains(slice []string, val string) bool {
@@ -34,17 +47,66 @@ func contains(slice []string, val string) bool {
 	return false
 }
 
+func WriteToCSV(filename string, houses []House) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		panic(err)
+		return err
+	}
+	defer func() {
+		err := file.Close()
+		if err != nil {
+			panic(err)
+			return
+		}
+	}()
+
+	writer := csv.NewWriter(file)
+
+	headers := []string{
+		"Name",
+		"Description",
+		"Location",
+		"Price",
+		"Url",
+		"Image",
+	}
+	err = writer.Write(headers)
+	if err != nil {
+		panic(err)
+		return err
+	}
+
+	for _, house := range houses {
+		records := []string{
+			house.Name,
+			house.Description,
+			house.Location,
+			house.Price,
+			house.Url,
+			house.Img,
+		}
+		err = writer.Write(records)
+		if err != nil {
+			panic(err)
+			return err
+		}
+	}
+	defer writer.Flush()
+	return nil
+}
+
 func main() {
 	c := colly.NewCollector()
 
 	var pagesToScrape []string
-	pageToScrape := "https://www.buyrentkenya.com/houses-for-rent?page=1"
+	pageToScrape := "https://www.buyrentkenya.com/houses-for-rent/"
 	pagesDiscovered := []string{pageToScrape}
 	//current iteration
 	i := 1
 	//max pages to scrap
 	limit := 5
-	c.OnHTML("li.page-item", func(e *colly.HTMLElement) {
+	c.OnHTML("a.relative", func(e *colly.HTMLElement) {
 		newPaginationLink := e.Attr("href")
 
 		//if page discovered is new
@@ -58,10 +120,11 @@ func main() {
 	})
 	c.OnHTML(".listing-card", func(e *colly.HTMLElement) {
 		house := House{}
-		house.Name = splitString(e.ChildText("span"), 1)
+		house.Name = formatName(e.ChildText("span"))
+		//house.Name = e.ChildText("span")
 		house.Location = e.ChildText(".ml-1")
-		house.Description = splitString(e.ChildText(".mb-3"), 0)
-		house.Price = splitString(e.ChildText(".text-xl"), 0)
+		house.Description = splitString(e.ChildText(".mb-3"))
+		house.Price = splitString(e.ChildText(".text-xl"))
 		house.Url = e.ChildAttr("a", "href")
 		house.Img = e.ChildAttr("img", "src")
 
@@ -86,45 +149,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	file, err := os.Create("houses.csv")
+	err = WriteToCSV("houses.csv", houses)
 	if err != nil {
 		panic(err)
+		return
 	}
-	defer func() {
-		err := file.Close()
-		if err != nil {
-			panic(err)
-			return
-		}
-	}()
-	writer := csv.NewWriter(file)
-
-	headers := []string{
-		"Name",
-		"Description",
-		"Location",
-		"Price",
-		"Url",
-		"Image",
-	}
-	err = writer.Write(headers)
-	if err != nil {
-		panic(err)
-	}
-	for _, house := range houses {
-		record := []string{
-			house.Name,
-			house.Description,
-			house.Location,
-			house.Price,
-			house.Url,
-			house.Img,
-		}
-		err = writer.Write(record)
-		if err != nil {
-			panic(err)
-		}
-	}
-	defer writer.Flush()
 }
