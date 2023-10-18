@@ -96,7 +96,7 @@ func WriteToCSV(filename string, houses []House) error {
 	return nil
 }
 
-func ScrapeWebsite(url string, filename string, limit int) (colly.Collector, error) {
+func Scrape(url string, filename string, limit int) (colly.Collector, error) {
 	//scraper configurations
 	c := colly.NewCollector(colly.Async(true))
 
@@ -160,11 +160,19 @@ func ScrapeWebsite(url string, filename string, limit int) (colly.Collector, err
 		return *c, err
 	}
 	c.Wait()
-	err = WriteToCSV(filename, houses)
+
+	//err = WriteToCSV(filename, houses)
+	//if err != nil {
+	//	panic(err)
+	//	return *c, err
+	//}
+
+	_, err = InsertDB(houses)
 	if err != nil {
 		panic(err)
 		return *c, err
 	}
+
 	if err != nil {
 		panic(err)
 		return *c, err

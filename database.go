@@ -18,13 +18,15 @@ func getSession() (*mgo.Session, error) {
 	return session.Copy(), err
 }
 
-func ImportHouseToDatabase() (int, error) {
+// ImportToDB ,write csv file to db
+func ImportToDB() (int, error) {
 	session, err := getSession()
 	if err != nil {
 		panic(err)
 		return 0, err
 	}
 	defer session.Close()
+	session.SetMode(mgo.Monotonic, true)
 
 	collection := session.DB("estate").C("houses")
 	records, err := mongoimport.CSVReader("houses.csv")
@@ -39,13 +41,15 @@ func ImportHouseToDatabase() (int, error) {
 	return count, nil
 }
 
-func RetrieveAllHouses() ([]byte, error) {
+// Retrieve  all houses from database
+func Retrieve() ([]byte, error) {
 	session, err := getSession()
 	if err != nil {
 		panic(err)
 		return nil, err
 	}
 	defer session.Close()
+	session.SetMode(mgo.Monotonic, true)
 	query := bson.M{}
 
 	var results []bson.M
@@ -58,4 +62,39 @@ func RetrieveAllHouses() ([]byte, error) {
 	}
 	jsonData, err := json.Marshal(results)
 	return jsonData, nil
+}
+
+// InsertDB inserts scraped data to DB without reading from csv
+func InsertDB(houses []House) (int, error) {
+	session, err := getSession()
+	if err != nil {
+		panic(err)
+		return 0, err
+	}
+	defer session.Close()
+	col := session.DB("estate").C("houses")
+	c, _ := col.Count()
+	if c > 0 {
+		err = col.DropCollection()
+		if err != nil {
+			panic(err)
+			return 0, err
+		}
+	}
+	for _, data := range houses {
+		err = col.Insert(data)
+		if err != nil {
+			panic(err)
+		}
+	}
+	if err != nil {
+		panic(err)
+		return 0, err
+	}
+	c, err = col.Count()
+	if err != nil {
+		panic(err)
+		return 0, err
+	}
+	return c, nil
 }

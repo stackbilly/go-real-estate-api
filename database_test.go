@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestImportHouseToDatabase(t *testing.T) {
+func TestImportToDB(t *testing.T) {
 	records, err := mongoimport.CSVReader("houses.csv")
 	if err != nil {
 		panic(err)
@@ -14,19 +14,15 @@ func TestImportHouseToDatabase(t *testing.T) {
 	}
 	want := len(records) - 1
 
-	got, err := ImportHouseToDatabase()
+	got, err := ImportToDB()
 	if err != nil {
 		t.Fail()
 	}
 	assert.Equal(t, want, got, "Expected number of records in the database")
 }
 
-//=== RUN   TestImportHouseToDatabase
-//Inserted 1578 records in 2.8993034s seconds--- PASS: TestImportHouseToDatabase (3.23s)
-//PASS
-
-func TestRetrieveAllHouses(t *testing.T) {
-	jsonData, err := RetrieveAllHouses()
+func TestRetrieve(t *testing.T) {
+	jsonData, err := Retrieve()
 	if err != nil {
 		t.Fail()
 	}
@@ -35,8 +31,94 @@ func TestRetrieveAllHouses(t *testing.T) {
 	}
 }
 
-/*
-=== RUN   TestRetrieveAllHouses
---- PASS: TestRetrieveAllHouses (0.05s)
-PASS
-*/
+func TestInsertDB(t *testing.T) {
+	var houses []House
+	houses = append(houses, House{
+		Name:        "4 Bed House in Nyari",
+		Description: "4 Bed House in Nyari",
+		Location:    "Nyari, Westlands",
+		Price:       "Price not communicated",
+		Url:         "/listings/4-bedroom-house-for-rent-nyari-3623660",
+		Img:         "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
+	},
+		House{
+			Name:        "4 Bed House in Nyari",
+			Description: "4 Bed House in Nyari",
+			Location:    "Nyari, Westlands",
+			Price:       "Price not communicated",
+			Url:         "/listings/4-bedroom-house-for-rent-nyari-3623660",
+			Img:         "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
+		},
+		House{
+			Name:        "4 Bed House in Nyari",
+			Description: "4 Bed House in Nyari",
+			Location:    "Nyari, Westlands",
+			Price:       "Price not communicated",
+			Url:         "/listings/4-bedroom-house-for-rent-nyari-3623660",
+			Img:         "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
+		},
+		House{
+			Name:        "4 Bed House in Nyari",
+			Description: "4 Bed House in Nyari",
+			Location:    "Nyari, Westlands",
+			Price:       "Price not communicated",
+			Url:         "/listings/4-bedroom-house-for-rent-nyari-3623660",
+			Img:         "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
+		},
+		House{
+			Name:        "4 Bed House in Nyari",
+			Description: "4 Bed House in Nyari",
+			Location:    "Nyari, Westlands",
+			Price:       "Price not communicated",
+			Url:         "/listings/4-bedroom-house-for-rent-nyari-3623660",
+			Img:         "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
+		},
+		House{
+			Name:        "4 Bed House in Nyari",
+			Description: "4 Bed House in Nyari",
+			Location:    "Nyari, Westlands",
+			Price:       "Price not communicated",
+			Url:         "/listings/4-bedroom-house-for-rent-nyari-3623660",
+			Img:         "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
+		},
+		House{
+			Name:        "4 Bed House in Nyari",
+			Description: "4 Bed House in Nyari",
+			Location:    "Nyari, Westlands",
+			Price:       "Price not communicated",
+			Url:         "/listings/4-bedroom-house-for-rent-nyari-3623660",
+			Img:         "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
+		},
+		House{
+			Name:        "4 Bed House in Nyari",
+			Description: "4 Bed House in Nyari",
+			Location:    "Nyari, Westlands",
+			Price:       "Price not communicated",
+			Url:         "/listings/4-bedroom-house-for-rent-nyari-3623660",
+			Img:         "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
+		},
+	)
+	type args struct {
+		house []House
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "Match len of slice equal len of inserted records",
+			args: args{house: houses},
+			want: len(houses),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := InsertDB(houses)
+			if err != nil {
+				t.Fail()
+			}
+			assert.Equal(t, tt.want, got, "Unexpected results got on test run")
+		})
+	}
+}
