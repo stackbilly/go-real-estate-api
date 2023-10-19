@@ -13,4 +13,4 @@
 --- PASS: TestInsertDB (0.69s)
 === RUN   TestInsertDB/Match_len_of_slice_equal_len_of_inserted_records
 --- PASS: TestInsertDB/Match_len_of_slice_equal_len_of_inserted_records (0.69s)
-PASS
+===PASS
