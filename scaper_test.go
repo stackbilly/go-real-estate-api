@@ -34,7 +34,3 @@ func TestScrapeWebsite(t *testing.T) {
 		}(file)
 	})
 }
-
-//=== RUN   TestScrapeWebsite
-//--- PASS: TestScrapeWebsite (3.67s)
-//PASS
