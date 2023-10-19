@@ -22,7 +22,7 @@ func getAllHouses(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
-//route to handle post requests for scraped data
+// route to handle post requests for scraped data
 func updateHouses(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
