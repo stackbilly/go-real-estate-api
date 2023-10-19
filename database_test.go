@@ -31,6 +31,7 @@ func TestRetrieve(t *testing.T) {
 	}
 }
 
+// test insert
 func TestInsertDB(t *testing.T) {
 	var houses []House
 	houses = append(houses, House{
