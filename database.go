@@ -64,6 +64,31 @@ func Retrieve() ([]byte, error) {
 	return jsonData, nil
 }
 
+func RetrieveLimit(limit int) ([]House, error) {
+	session, err := getSession()
+	if err != nil {
+		return nil, err
+	}
+	defer session.Close()
+	session.SetMode(mgo.Monotonic, true)
+	coll := session.DB("estate").C("houses")
+
+	query := coll.Find(nil).Limit(limit)
+
+	iter := query.Iter()
+	var houses []House
+
+	var result House
+	for iter.Next(&result) {
+
+		houses = append(houses, result)
+	}
+	if err := iter.Err(); err != nil {
+		return nil, err
+	}
+	return houses, nil
+}
+
 // InsertDB inserts scraped data to DB without reading from csv
 func InsertDB(houses []House) (int, error) {
 	session, err := getSession()

@@ -39,7 +39,7 @@ func TestInsertDB(t *testing.T) {
 		Location:    "Nyari, Westlands",
 		Price:       "Price not communicated",
 		Url:         "/listings/4-bedroom-house-for-rent-nyari-3623660",
-		Img:         "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
+		Image:       "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
 	},
 		House{
 			Name:        "4 Bed House in Nyari",
@@ -47,7 +47,7 @@ func TestInsertDB(t *testing.T) {
 			Location:    "Nyari, Westlands",
 			Price:       "Price not communicated",
 			Url:         "/listings/4-bedroom-house-for-rent-nyari-3623660",
-			Img:         "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
+			Image:       "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
 		},
 		House{
 			Name:        "4 Bed House in Nyari",
@@ -55,7 +55,7 @@ func TestInsertDB(t *testing.T) {
 			Location:    "Nyari, Westlands",
 			Price:       "Price not communicated",
 			Url:         "/listings/4-bedroom-house-for-rent-nyari-3623660",
-			Img:         "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
+			Image:       "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
 		},
 		House{
 			Name:        "4 Bed House in Nyari",
@@ -63,7 +63,7 @@ func TestInsertDB(t *testing.T) {
 			Location:    "Nyari, Westlands",
 			Price:       "Price not communicated",
 			Url:         "/listings/4-bedroom-house-for-rent-nyari-3623660",
-			Img:         "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
+			Image:       "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
 		},
 		House{
 			Name:        "4 Bed House in Nyari",
@@ -71,7 +71,7 @@ func TestInsertDB(t *testing.T) {
 			Location:    "Nyari, Westlands",
 			Price:       "Price not communicated",
 			Url:         "/listings/4-bedroom-house-for-rent-nyari-3623660",
-			Img:         "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
+			Image:       "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
 		},
 		House{
 			Name:        "4 Bed House in Nyari",
@@ -79,7 +79,7 @@ func TestInsertDB(t *testing.T) {
 			Location:    "Nyari, Westlands",
 			Price:       "Price not communicated",
 			Url:         "/listings/4-bedroom-house-for-rent-nyari-3623660",
-			Img:         "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
+			Image:       "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
 		},
 		House{
 			Name:        "4 Bed House in Nyari",
@@ -87,7 +87,7 @@ func TestInsertDB(t *testing.T) {
 			Location:    "Nyari, Westlands",
 			Price:       "Price not communicated",
 			Url:         "/listings/4-bedroom-house-for-rent-nyari-3623660",
-			Img:         "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
+			Image:       "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
 		},
 		House{
 			Name:        "4 Bed House in Nyari",
@@ -95,7 +95,7 @@ func TestInsertDB(t *testing.T) {
 			Location:    "Nyari, Westlands",
 			Price:       "Price not communicated",
 			Url:         "/listings/4-bedroom-house-for-rent-nyari-3623660",
-			Img:         "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
+			Image:       "https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg",
 		},
 	)
 	type args struct {
@@ -119,6 +119,37 @@ func TestInsertDB(t *testing.T) {
 				t.Fail()
 			}
 			assert.Equal(t, tt.want, got, "Unexpected results got on test run")
+		})
+	}
+}
+
+func TestRetrieveLimit(t *testing.T) {
+	docs, err := RetrieveLimit(10)
+	if err != nil {
+		t.Fail()
+	}
+	type args struct {
+		limit int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "Test if len(docs) retrieved = limit",
+			args: args{limit: 10},
+			want: len(docs),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			data, err := RetrieveLimit(tt.args.limit)
+			got := len(data)
+			if err != nil {
+				t.Fail()
+			}
+			assert.Equal(t, tt.want, got, "Got unexpected value")
 		})
 	}
 }
