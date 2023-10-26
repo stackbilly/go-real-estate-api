@@ -3,17 +3,19 @@ package main
 import (
 	"encoding/csv"
 	"github.com/gocolly/colly"
+	"gopkg.in/mgo.v2/bson"
 	"os"
 	"strings"
 )
 
 type House struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Location    string `json:"location"`
-	Price       string `json:"price"`
-	Url         string `json:"url"`
-	Img         string `json:"img"`
+	Id          bson.ObjectId `bson:"_id,omitempty"`
+	Name        string        `bson:"Name" json:"Name"`
+	Description string        `bson:"Description" json:"Description"`
+	Location    string        `bson:"Location" json:"Location"`
+	Price       string        `bson:"Price" json:"Price"`
+	Url         string        `bson:"Url" json:"Url"`
+	Image       string        `bson:"Image" json:"Image"`
 }
 
 var houses []House
@@ -84,7 +86,7 @@ func WriteToCSV(filename string, houses []House) error {
 			house.Location,
 			house.Price,
 			house.Url,
-			house.Img,
+			house.Image,
 		}
 		err = writer.Write(records)
 		if err != nil {
@@ -135,7 +137,7 @@ func Scrape(url string, filename string, limit int) (colly.Collector, error) {
 		house.Description = splitString(e.ChildText(".mb-3"))
 		house.Price = splitString(e.ChildText(".text-xl"))
 		house.Url = e.ChildAttr("a", "href")
-		house.Img = e.ChildAttr("img", "src")
+		house.Image = e.ChildAttr("img", "src")
 
 		houses = append(houses, house)
 	})
