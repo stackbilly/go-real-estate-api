@@ -1,47 +1,165 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <title>Real Estate API</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.4.0/jsoneditor.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.4.0/jsoneditor.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 <body>
-    <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
-        <div class="container-fluid">
-            <a class="navbar-brand">Real Estate Data</a>
-            <button type="button" class="btn btn-outline-danger" onclick="location.href='https://github.com/Livingstone-Billy/go-real-estate-api';" >View on GitHub</button>
+<nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+    <div class="container-fluid">
+        <a class="navbar-brand">Real Estate API</a>
+        <button type="button" class="btn btn-outline-danger" onclick="location.href='https://github.com/stackbilly/go-real-estate-api';" >View on GitHub</button>
+    </div>
+</nav>
+<div class="container">
+    <div class="p-5 my-4 bg-light rounded-3">
+        <h1>Find Data for Your Real Estate Projects</h1>
+        <p class="lead">
+            Obtain Real Estate data for use in your applications and models.
+            Data contains House Name, Description, Location, Price, Url, and Image.
+            Use the API to query and receive data straight to your backend in json format.
+            Contributions and improvements to the API are open and so feel free to provide
+            suggestions via <a href="https://github.com/stackbilly/go-real-estate-api" class="text-success" target="_blank">GitHub</a> issues and pull requests.
+        </p>
+        <p><a href="https://www.tutorialrepublic.com" target="_blank" class="btn btn-success btn-lg">Get started today</a></p>
+    </div>
+    <h4>Sample Data</h4>
+    <div class="m-4">
+        <table class="table table-striped table-dark">
+            <thead>
+            <tr>
+                <th>House Name</th>
+                <th>Description</th>
+                <th>Location</th>
+                <th>Price</th>
+                <th>Url</th>
+                <th>House Image</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{- /*gotype: go-restapi-gorm.House*/ -}}
+            {{ range $value := .}}
+                <tr>
+                    <td>{{ $value.Name }}</td>
+                    <td>{{ $value.Description }}</td>
+                    <td>{{ $value.Location }}</td>
+                    <td>{{ $value.Price }}</td>
+                    <td>{{ $value.Url }}</td>
+                    <td><a href="{{ $value.Image }}">Image Url</a></td>
+                </tr>
+            {{ end }}
+            </tbody>
+        </table>
+    </div>
+    <h4>Json Output</h4>
+    <div id="json-data" style="height: 300px;"></div>
+    <hr>
+    <div class="card">
+        <div class="card-header">
+            API Call
         </div>
-    </nav>
-    <div class="row" style="padding: 50px;">
-        <div class="col-sm-6 mb-3 mb-sm-0">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Obtain Real Estate Data</h5>
-                    <p class="card-text">
-                        Obtain Real Estate data for use in your applications and models.
-                        Data contains House Name, Description, Location, Price, Url, and Image.
-                        Use the API to query and receive data straight to your backend in json format.
-                        Contributions and improvements to the API are open and so feel free to provide
-                        suggestions via GitHub issues and pull requests
-                    </p>
-                    <a href="#" class="btn btn-primary">GET STARTED</a>
+        <div class="card-body">
+            <h5 class="card-title">Make an api call to the link below</h5>
+            <p class="card-text"><a href="http://localhost:8080/api/houses">http://localhost:8080/api/houses</a></p>
+        </div>
+    </div>
+    <hr>
+    <footer class="bg-light text-center text-lg-start">
+        <!-- Grid container -->
+        <div class="container p-4">
+            <!--Grid row-->
+            <div class="row">
+                <!--Grid column-->
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Github</h5>
+
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="https://github.com/stackbilly/go-real-estate-api" style="text-decoration: none;" class="text-dark"><i class="bi bi-github"> Github</i></a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h5 class="text-uppercase mb-0">Social</h5>
+
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="https://twitter.com/bilLivingstone" style="text-decoration: none;" class="text-dark"><i class="bi bi-twitter-x"></i> Twitter</a>
+                        </li>
+                        <li>
+                            <a href="https://www.linkedin.com/in/livingstone-ochadia-535a99190/" style="text-decoration: none;" class="text-dark"><i class="bi bi-linkedin"></i> LinkedIn</a>
+                        </li>
+                        <li>
+                            <a href="mailto:livingstoneochadia95@gmail.com" style="text-decoration: none;" class="text-dark"><i class="bi bi-envelope"></i> Gmail</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Support</h5>
+
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="https://www.buymeacoffee.com/stackbily" style="text-decoration: none;" class="text-dark"><i class="bi bi-cup-straw"></i> Buy me coffee</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h5 class="text-uppercase mb-0">Get in Touch</h5>
+
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="tel:254758288943" style="text-decoration: none;" class="text-dark"><i class="bi bi-telephone"></i> 0758288943</a>
+                        </li>
+                        <li>
+                            <a href="https://api.whatsapp.com/send?phone=254758288943" style="text-decoration: none;" class="text-dark"><i class="bi bi-whatsapp"></i> Whatsapp</a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
-        <div class="col-sm-6">
-            <div class="list-group">
 
-
-                <a href="#" class="list-group-item list-group-item-action list-group-item-primary">Name</a>
-                <a href="#" class="list-group-item list-group-item-action list-group-item-secondary">Description</a>
-                <a href="#" class="list-group-item list-group-item-action list-group-item-success">Location</a>
-                <a href="#" class="list-group-item list-group-item-action list-group-item-danger">Price</a>
-                <a href="#" class="list-group-item list-group-item-action list-group-item-warning">Url</a>
-                <a href="#" class="list-group-item list-group-item-action list-group-item-info">Image</a>
-            </div>
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            © 2023 Copyright:
+            <a class="text-dark" href="https://github.com/stackbilly">Real Estate API</a>
         </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    </footer>
+</div>
+<script>
+    const container = document.getElementById("json-data");
+    const options = {
+        mode: "code"
+    };
+    const editor = new JSONEditor(container, options);
+    const initialData = [
+        {
+        "Id":"652bb8481be35e2471f72238",
+        "Name":"4 Bed House in Nyari",
+        "Description":"4 Bed House in Nyari",
+        "Location":"Nyari, Westlands",
+        "Price":"Price not communicated",
+        "Url":"/listings/4-bedroom-house-for-rent-nyari-3623660",
+        "Image":"https://i.roamcdn.net/prop/brk/listing-thumb-376w/c18df8c33939424def6ea66c405232c6/-/prod-property-core-backend-media-brk/5520842/6deae430-b3e5-4ab1-90e7-966f30cc791a.jpg"
+        },
+        {
+        "Id":"652bb8481be35e2471f72239",
+        "Name":"4 Bed Townhouse with En Suite at Ridgeways",
+            "Description":"4 Bed Townhouse with En Suite at Ridgeways",
+            "Location":"Ridgeways",
+            "Price":"KSh 285,000",
+            "Url":"/listings/4-bedroom-townhouse-for-rent-ridgeways-3639903",
+            "Image":"https://i.roamcdn.net/prop/brk/listing-thumb-376w/343e31e67b6789be4d515198a0a9ddc2/-/prod-property-core-backend-media-brk/5760878/a3b24da6-4f29-4c18-9c64-d0dac122eb32.png"
+        }
+        ]
+    editor.set(initialData)
+</script>
 </body>
 </html>
