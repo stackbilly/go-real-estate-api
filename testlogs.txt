@@ -18,3 +18,9 @@
 === RUN   TestScrapeWebsite
 --- PASS: TestScrapeWebsite (3.67s)
 === PASS
+
+=== RUN   TestRetrieveLimit
+--- PASS: TestRetrieveLimit (0.08s)
+=== RUN   TestRetrieveLimit/Test_if_len(docs)_retrieved_=_limit
+    --- PASS: TestRetrieveLimit/Test_if_len(docs)_retrieved_=_limit (0.01s)
+PASS
