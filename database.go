@@ -4,15 +4,24 @@ import (
 	"encoding/json"
 	"fmt"
 	mongoimport "github.com/Livingstone-Billy/mongo-import"
+	"github.com/joho/godotenv"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"os"
 	"time"
 )
 
 func getSession() (*mgo.Session, error) {
-	session, err := mgo.Dial("localhost")
+	err := godotenv.Load()
 	if err != nil {
-		panic(err)
+		return nil, err
+	}
+	username := os.Getenv("USERNAME")
+	password := os.Getenv("PASSWORD")
+	url := fmt.Sprintf("mongodb+srv://%s:%s@cluster0.vhmgz.mongodb.net/estate", username, password)
+	session, err := mgo.Dial(url)
+	if err != nil {
+		fmt.Printf("Connection err:\n%s", err)
 		return nil, err
 	}
 	return session.Copy(), err
