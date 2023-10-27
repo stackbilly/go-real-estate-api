@@ -1,1 +1,1 @@
-web: go_build_go_rest_api_gorm
+web: go-restapi-gorm.exe
