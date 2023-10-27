@@ -2,11 +2,14 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gocolly/colly"
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 )
 
@@ -101,6 +104,11 @@ func downloadCsvFile(w http.ResponseWriter, _ *http.Request) {
 }
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		return
+	}
+
 	router := mux.NewRouter()
 	router.HandleFunc("/", HomeHandler)
 	router.HandleFunc("/api/scrape", updateHouses).Methods("POST")
@@ -109,12 +117,15 @@ func main() {
 	router.HandleFunc("/api/house", getSingleHouse)
 	router.HandleFunc("/api/file", downloadCsvFile)
 
+	portNo := os.Getenv("PORT")
+
+	port := fmt.Sprintf(":%s", portNo)
 	server := &http.Server{
-		Addr:    ":8080",
+		Addr:    port,
 		Handler: router,
 	}
 	log.Println("Listening....")
-	err := server.ListenAndServe()
+	err = server.ListenAndServe()
 	if err != nil {
 		return
 	}
