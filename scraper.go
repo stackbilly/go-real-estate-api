@@ -98,7 +98,7 @@ func WriteToCSV(filename string, houses []House) error {
 	return nil
 }
 
-func Scrape(url string, filename string, limit int) (colly.Collector, error) {
+func Scrape(url string, limit int) (colly.Collector, error) {
 	//scraper configurations
 	c := colly.NewCollector(colly.Async(true))
 
