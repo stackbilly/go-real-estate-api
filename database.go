@@ -1,134 +1,167 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
-	mongoimport "github.com/Livingstone-Billy/mongo-import"
 	"github.com/joho/godotenv"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"os"
-	"time"
 )
 
-func getSession() (*mgo.Session, error) {
+func getClient() (*mongo.Client, error) {
 	err := godotenv.Load()
 	if err != nil {
 		return nil, err
 	}
 	username := os.Getenv("USERNAME")
 	password := os.Getenv("PASSWORD")
-	url := fmt.Sprintf("mongodb+srv://%s:%s@cluster0.vhmgz.mongodb.net/estate", username, password)
-	session, err := mgo.Dial(url)
+	uri := fmt.Sprintf("mongodb+srv://%s:%s@cluster0.vhmgz.mongodb.net/estate", username, password)
+	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
+	opts := options.Client().ApplyURI(uri).SetServerAPIOptions(serverAPI)
+	client, err := mongo.Connect(context.TODO(), opts)
 	if err != nil {
-		fmt.Printf("Connection err:\n%s", err)
 		return nil, err
 	}
-	return session.Copy(), err
+	return client, nil
 }
 
 // ImportToDB ,write csv file to db
-func ImportToDB() (int, error) {
-	session, err := getSession()
-	if err != nil {
-		panic(err)
-		return 0, err
-	}
-	defer session.Close()
-	session.SetMode(mgo.Monotonic, true)
-
-	collection := session.DB("estate").C("houses")
-	records, err := mongoimport.CSVReader("houses.csv")
-	if err != nil {
-		panic(err)
-		return 0, err
-	}
-	start := time.Now()
-	count := mongoimport.CSVImport(collection, records, 1, len(records))
-	fmt.Printf("Inserted %d records in %s seconds", count, time.Since(start))
-
-	return count, nil
-}
+//func ImportToDB() (int, error) {
+//	session, err := getSession()
+//	if err != nil {
+//		panic(err)
+//		return 0, err
+//	}
+//	defer session.Close()
+//	session.SetMode(mgo.Monotonic, true)
+//
+//	collection := session.DB("estate").C("houses")
+//	records, err := mongoimport.CSVReader("houses.csv")
+//	if err != nil {
+//		panic(err)
+//		return 0, err
+//	}
+//	start := time.Now()
+//	count := mongoimport.CSVImport(collection, records, 1, len(records))
+//	fmt.Printf("Inserted %d records in %s seconds", count, time.Since(start))
+//
+//	return count, nil
+//}
 
 // Retrieve  all houses from database
 func Retrieve() ([]byte, error) {
-	session, err := getSession()
+	client, err := getClient()
 	if err != nil {
-		panic(err)
 		return nil, err
 	}
-	defer session.Close()
-	session.SetMode(mgo.Monotonic, true)
-	query := bson.M{}
+	defer func() {
+		if err = client.Disconnect(context.TODO()); err != nil {
+			panic(err)
+			return
+		}
+	}()
+	collection := client.Database("estate").Collection("houses")
+	ctx := context.TODO()
+
+	filter := bson.M{}
+
+	cursor, err := collection.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
 
 	var results []bson.M
-	collection := session.DB("estate").C("houses")
-
-	err = collection.Find(query).All(&results)
-	if err != nil {
-		panic(err)
+	if err = cursor.All(ctx, &results); err != nil {
 		return nil, err
 	}
+	defer func(cursor *mongo.Cursor, ctx context.Context) {
+		err := cursor.Close(ctx)
+		if err != nil {
+			panic(err)
+			return
+		}
+	}(cursor, ctx)
 	jsonData, err := json.Marshal(results)
+	if err != nil {
+		return nil, err
+	}
 	return jsonData, nil
 }
 
 func RetrieveLimit(limit int) ([]House, error) {
-	session, err := getSession()
+	client, err := getClient()
 	if err != nil {
 		return nil, err
 	}
-	defer session.Close()
-	session.SetMode(mgo.Monotonic, true)
-	coll := session.DB("estate").C("houses")
+	defer func() {
+		if err = client.Disconnect(context.TODO()); err != nil {
+			panic(err)
+			return
+		}
+	}()
+	ctx := context.TODO()
 
-	query := coll.Find(nil).Limit(limit)
+	collection := client.Database("estate").Collection("houses")
 
-	iter := query.Iter()
-	var houses []House
-
-	var result House
-	for iter.Next(&result) {
-
-		houses = append(houses, result)
-	}
-	if err := iter.Err(); err != nil {
+	filter := bson.M{}
+	findOptions := options.Find()
+	findOptions.SetLimit(int64(limit))
+	cursor, err := collection.Find(ctx, filter, findOptions)
+	if err != nil {
 		return nil, err
 	}
-	return houses, nil
+	defer func(cursor *mongo.Cursor, ctx context.Context) {
+		err = cursor.Close(ctx)
+		if err != nil {
+			panic(err)
+			return
+		}
+	}(cursor, ctx)
+
+	var results []House
+	if err = cursor.All(ctx, &results); err != nil {
+		return nil, err
+	}
+	return results, nil
 }
 
-// InsertDB inserts scraped data to DB without reading from csv
-func InsertDB(houses []House) (int, error) {
-	session, err := getSession()
+// SaveToDatabase inserts scraped data to DB without reading from csv
+func SaveToDatabase(houses []House) (int, error) {
+	client, err := getClient()
 	if err != nil {
-		panic(err)
 		return 0, err
 	}
-	defer session.Close()
-	col := session.DB("estate").C("houses")
-	c, _ := col.Count()
-	if c > 0 {
-		err = col.DropCollection()
+	defer func() {
+		err := client.Disconnect(context.TODO())
 		if err != nil {
 			panic(err)
-			return 0, err
+			return
 		}
-	}
-	for _, data := range houses {
-		err = col.Insert(data)
-		if err != nil {
-			panic(err)
-		}
-	}
+	}()
+
+	ctx := context.TODO()
+
+	collection := client.Database("estate").Collection("houses")
+	filter := bson.M{}
+	_, err = collection.DeleteMany(ctx, filter)
 	if err != nil {
-		panic(err)
 		return 0, err
 	}
-	c, err = col.Count()
+
+	documents := make([]interface{}, len(houses))
+	for i, data := range houses {
+		documents[i] = data
+	}
+	_, err = collection.InsertMany(ctx, documents)
 	if err != nil {
-		panic(err)
 		return 0, err
 	}
-	return c, nil
+	count, err := collection.CountDocuments(ctx, filter)
+	if err != nil {
+		return 0, err
+	}
+	return int(count), nil
 }
