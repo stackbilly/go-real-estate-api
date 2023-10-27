@@ -86,6 +86,20 @@ func getSingleHouse(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func downloadCsvFile(w http.ResponseWriter, r *http.Request) {
+	houses, err := RetrieveAll()
+	if err != nil {
+		panic(err)
+		return
+	}
+	w.Header().Set("Content-Type", "text/csv")
+	w.Header().Add("Content-Disposition", `attachment;filename="houses.csv"`)
+	if err = WriteToCSV(w, houses); err != nil {
+		panic(err)
+		return
+	}
+}
+
 func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/", HomeHandler)
@@ -93,6 +107,7 @@ func main() {
 	router.HandleFunc("/api/scrape", getScrape).Methods("GET")
 	router.HandleFunc("/api/houses", getAllHouses)
 	router.HandleFunc("/api/house", getSingleHouse)
+	router.HandleFunc("/api/file", downloadCsvFile)
 
 	server := &http.Server{
 		Addr:    ":8080",
