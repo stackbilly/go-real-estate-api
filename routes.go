@@ -59,7 +59,7 @@ func updateHouses(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
+func HomeHandler(w http.ResponseWriter, _ *http.Request) {
 	data, err := RetrieveLimit(5)
 	if err != nil {
 		panic(err)
@@ -72,7 +72,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getSingleHouse(w http.ResponseWriter, r *http.Request) {
+func getSingleHouse(w http.ResponseWriter, _ *http.Request) {
 	data, err := RetrieveLimit(2)
 	if err != nil {
 		http.Error(w, "Error", http.StatusBadRequest)
@@ -86,7 +86,7 @@ func getSingleHouse(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func downloadCsvFile(w http.ResponseWriter, r *http.Request) {
+func downloadCsvFile(w http.ResponseWriter, _ *http.Request) {
 	houses, err := RetrieveAll()
 	if err != nil {
 		panic(err)
