@@ -1,1 +1,1 @@
-web: go-rest-api-gorm
+web: go_build_go_rest_api_gorm
