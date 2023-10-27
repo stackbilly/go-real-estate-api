@@ -24,26 +24,39 @@ func getAllHouses(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
+func getScrape(w http.ResponseWriter, r *http.Request) {
+	var tpl = template.Must(template.ParseFiles("templates/scrape.html"))
+	var err error
+	if r.Method == "GET" {
+		err = tpl.Execute(w, nil)
+	}
+	if err != nil {
+		http.Error(w, "Error navigating to scrape.html", http.StatusBadRequest)
+	}
+}
+
 // route to handle post requests for scraped data
 func updateHouses(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
-	if err != nil {
-		panic(err)
-		return
-	}
-	limit, _ := strconv.Atoi(r.PostFormValue("limit"))
-	url := r.PostFormValue("url")
-
-	c, err := Scrape(url, "houses.csv", limit)
-	var tpl = template.Must(template.ParseFiles("templates/index.html"))
-
-	c.OnScraped(func(response *colly.Response) {
-		err = tpl.Execute(w, "Data scraped successfully")
+	if r.Method == "POST" {
+		err := r.ParseForm()
 		if err != nil {
 			panic(err)
 			return
 		}
-	})
+		limit, _ := strconv.Atoi(r.PostFormValue("limit"))
+		url := r.PostFormValue("url")
+
+		c, err := Scrape(url, limit)
+
+		c.OnScraped(func(response *colly.Response) {
+			if err != nil {
+				panic(err)
+				return
+			}
+		})
+	} else {
+		http.Error(w, "Bad Method", http.StatusBadRequest)
+	}
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
@@ -76,7 +89,8 @@ func getSingleHouse(w http.ResponseWriter, r *http.Request) {
 func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/", HomeHandler)
-	router.HandleFunc("/api/scrape", updateHouses)
+	router.HandleFunc("/api/scrape", updateHouses).Methods("POST")
+	router.HandleFunc("/api/scrape", getScrape).Methods("GET")
 	router.HandleFunc("/api/houses", getAllHouses)
 	router.HandleFunc("/api/house", getSingleHouse)
 
