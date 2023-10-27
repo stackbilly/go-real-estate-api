@@ -16,9 +16,8 @@ func getClient() (*mongo.Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	username := os.Getenv("USERNAME")
 	password := os.Getenv("PASSWORD")
-	uri := fmt.Sprintf("mongodb+srv://%s:%s@cluster0.vhmgz.mongodb.net/estate", username, password)
+	uri := fmt.Sprintf("mongodb+srv://LaplaceBilly:%s@cluster0.vhmgz.mongodb.net/?retryWrites=true&w=majority", password)
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	opts := options.Client().ApplyURI(uri).SetServerAPIOptions(serverAPI)
 	client, err := mongo.Connect(context.TODO(), opts)
