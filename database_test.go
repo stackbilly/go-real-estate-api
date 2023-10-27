@@ -1,24 +1,34 @@
 package main
 
 import (
-	mongoimport "github.com/Livingstone-Billy/mongo-import"
+	"context"
+	"fmt"
 	"github.com/stretchr/testify/assert"
+	"go.mongodb.org/mongo-driver/bson"
 	"testing"
 )
 
-func TestImportToDB(t *testing.T) {
-	records, err := mongoimport.CSVReader("houses.csv")
+func TestClient(t *testing.T) {
+	client, err := getClient()
 	if err != nil {
-		panic(err)
-		return
-	}
-	want := len(records) - 1
-
-	got, err := ImportToDB()
-	if err != nil {
+		fmt.Printf("\nFail to get client %s", err)
 		t.Fail()
 	}
-	assert.Equal(t, want, got, "Expected number of records in the database")
+	defer func() {
+		if err = client.Disconnect(context.TODO()); err != nil {
+			fmt.Printf("\nFail to disconnect client %s", err)
+			return
+		}
+	}()
+	//sending a ping to check successful connection
+	var result bson.M
+	if err = client.Database("admin").RunCommand(context.TODO(),
+		bson.D{{"ping", 1}}).Decode(&result); err != nil {
+		fmt.Printf("\nFail to ping %s", err)
+		t.Fail()
+	} else {
+		t.Log("\nSuccessfully connected to mongodb atlas")
+	}
 }
 
 func TestRetrieve(t *testing.T) {
@@ -31,7 +41,7 @@ func TestRetrieve(t *testing.T) {
 	}
 }
 
-func TestInsertDB(t *testing.T) {
+func TestSaveToDatabase(t *testing.T) {
 	var houses []House
 	houses = append(houses, House{
 		Name:        "4 Bed House in Nyari",
@@ -114,7 +124,7 @@ func TestInsertDB(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := InsertDB(houses)
+			got, err := SaveToDatabase(houses)
 			if err != nil {
 				t.Fail()
 			}
