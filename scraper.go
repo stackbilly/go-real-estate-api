@@ -4,7 +4,7 @@ import (
 	"encoding/csv"
 	"github.com/gocolly/colly"
 	"gopkg.in/mgo.v2/bson"
-	"os"
+	"net/http"
 	"strings"
 )
 
@@ -49,21 +49,9 @@ func contains(slice []string, val string) bool {
 	return false
 }
 
-func WriteToCSV(filename string, houses []House) error {
-	file, err := os.Create(filename)
-	if err != nil {
-		panic(err)
-		return err
-	}
-	defer func() {
-		err := file.Close()
-		if err != nil {
-			panic(err)
-			return
-		}
-	}()
-
-	writer := csv.NewWriter(file)
+func WriteToCSV(w http.ResponseWriter, houses []House) error {
+	writer := csv.NewWriter(w)
+	defer writer.Flush()
 
 	headers := []string{
 		"Name",
@@ -73,7 +61,7 @@ func WriteToCSV(filename string, houses []House) error {
 		"Url",
 		"Image",
 	}
-	err = writer.Write(headers)
+	err := writer.Write(headers)
 	if err != nil {
 		panic(err)
 		return err
@@ -94,7 +82,7 @@ func WriteToCSV(filename string, houses []House) error {
 			return err
 		}
 	}
-	defer writer.Flush()
+
 	return nil
 }
 
@@ -169,7 +157,7 @@ func Scrape(url string, limit int) (colly.Collector, error) {
 	//	return *c, err
 	//}
 
-	_, err = InsertDB(houses)
+	_, err = SaveToDatabase(houses)
 	if err != nil {
 		panic(err)
 		return *c, err
