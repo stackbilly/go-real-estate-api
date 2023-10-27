@@ -127,6 +127,42 @@ func RetrieveLimit(limit int) ([]House, error) {
 	return results, nil
 }
 
+func RetrieveAll() ([]House, error) {
+	client, err := getClient()
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if err = client.Disconnect(context.TODO()); err != nil {
+			panic(err)
+			return
+		}
+	}()
+	ctx := context.TODO()
+
+	collection := client.Database("estate").Collection("houses")
+
+	filter := bson.M{}
+	findOptions := options.Find()
+	cursor, err := collection.Find(ctx, filter, findOptions)
+	if err != nil {
+		return nil, err
+	}
+	defer func(cursor *mongo.Cursor, ctx context.Context) {
+		err = cursor.Close(ctx)
+		if err != nil {
+			panic(err)
+			return
+		}
+	}(cursor, ctx)
+
+	var results []House
+	if err = cursor.All(ctx, &results); err != nil {
+		return nil, err
+	}
+	return results, nil
+}
+
 // SaveToDatabase inserts scraped data to DB without reading from csv
 func SaveToDatabase(houses []House) (int, error) {
 	client, err := getClient()
