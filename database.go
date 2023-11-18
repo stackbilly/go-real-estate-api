@@ -27,29 +27,6 @@ func getClient() (*mongo.Client, error) {
 	return client, nil
 }
 
-// ImportToDB ,write csv file to db
-//func ImportToDB() (int, error) {
-//	session, err := getSession()
-//	if err != nil {
-//		panic(err)
-//		return 0, err
-//	}
-//	defer session.Close()
-//	session.SetMode(mgo.Monotonic, true)
-//
-//	collection := session.DB("estate").C("houses")
-//	records, err := mongoimport.CSVReader("houses.csv")
-//	if err != nil {
-//		panic(err)
-//		return 0, err
-//	}
-//	start := time.Now()
-//	count := mongoimport.CSVImport(collection, records, 1, len(records))
-//	fmt.Printf("Inserted %d records in %s seconds", count, time.Since(start))
-//
-//	return count, nil
-//}
-
 // Retrieve  all houses from database
 func Retrieve() ([]byte, error) {
 	client, err := getClient()
