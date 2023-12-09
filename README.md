@@ -1,5 +1,5 @@
 # real-estate-api
-This projects demonstrates a simple real estate api endpoint built with golang. You can use it to obtain real estate data for your applications or to train your model. 
+This projects demonstrates a simple real estate api endpoint built with golang. You can use it to obtain real estate listings data for your applications or to train your model. 
 ## Table of Contents
 - [Introduction](#introduction)
 - [Tools](#tools)
