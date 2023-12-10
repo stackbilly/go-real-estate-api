@@ -116,9 +116,6 @@ func main() {
 	router.HandleFunc("/api/house", getSingleHouse)
 	router.HandleFunc("/api/file", downloadCsvFile)
 
-	// portNo := os.Getenv("PORT")
-
-	// port := fmt.Sprintf(":%s", portNo)
 	server := &http.Server{
 		Addr:    ":8080",
 		Handler: router,
