@@ -2,15 +2,14 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
-	"github.com/gocolly/colly"
-	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
 	"html/template"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
+
+	"github.com/gocolly/colly"
+	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 )
 
 func getAllHouses(w http.ResponseWriter, _ *http.Request) {
@@ -117,11 +116,11 @@ func main() {
 	router.HandleFunc("/api/house", getSingleHouse)
 	router.HandleFunc("/api/file", downloadCsvFile)
 
-	portNo := os.Getenv("PORT")
+	// portNo := os.Getenv("PORT")
 
-	port := fmt.Sprintf(":%s", portNo)
+	// port := fmt.Sprintf(":%s", portNo)
 	server := &http.Server{
-		Addr:    port,
+		Addr:    ":8080",
 		Handler: router,
 	}
 	log.Println("Listening....")
