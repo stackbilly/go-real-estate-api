@@ -28,6 +28,47 @@ func getClient() (*mongo.Client, error) {
 }
 
 // Retrieve  all houses from database
+//
+//	func Retrieve() ([]byte, error) {
+//		client, err := getClient()
+//		if err != nil {
+//			return nil, err
+//		}
+//		defer func() {
+//			if err = client.Disconnect(context.TODO()); err != nil {
+//				panic(err)
+//				return
+//			}
+//		}()
+//		collection := client.Database("estate").Collection("houses")
+//		ctx := context.TODO()
+//
+//		filter := bson.M{}
+//
+//		cursor, err := collection.Find(ctx, filter)
+//		if err != nil {
+//			return nil, err
+//		}
+//
+//		var results []bson.M
+//		if err = cursor.All(ctx, &results); err != nil {
+//			return nil, err
+//		}
+//		defer func(cursor *mongo.Cursor, ctx context.Context) {
+//			err := cursor.Close(ctx)
+//			if err != nil {
+//				panic(err)
+//				return
+//			}
+//		}(cursor, ctx)
+//		jsonData, err := json.Marshal(results)
+//		if err != nil {
+//			return nil, err
+//		}
+//		return jsonData, nil
+//	}
+//
+// Retrieve the first house from the database
 func Retrieve() ([]byte, error) {
 	client, err := getClient()
 	if err != nil {
@@ -39,6 +80,7 @@ func Retrieve() ([]byte, error) {
 			return
 		}
 	}()
+
 	collection := client.Database("estate").Collection("houses")
 	ctx := context.TODO()
 
@@ -49,10 +91,13 @@ func Retrieve() ([]byte, error) {
 		return nil, err
 	}
 
-	var results []bson.M
-	if err = cursor.All(ctx, &results); err != nil {
-		return nil, err
+	var result bson.M
+	if cursor.Next(ctx) {
+		if err = cursor.Decode(&result); err != nil {
+			return nil, err
+		}
 	}
+
 	defer func(cursor *mongo.Cursor, ctx context.Context) {
 		err := cursor.Close(ctx)
 		if err != nil {
@@ -60,7 +105,8 @@ func Retrieve() ([]byte, error) {
 			return
 		}
 	}(cursor, ctx)
-	jsonData, err := json.Marshal(results)
+
+	jsonData, err := json.Marshal(result)
 	if err != nil {
 		return nil, err
 	}
