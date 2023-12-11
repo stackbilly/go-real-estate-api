@@ -9,7 +9,6 @@ import (
 
 	"github.com/gocolly/colly"
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
 )
 
 func getAllHouses(w http.ResponseWriter, _ *http.Request) {
@@ -103,11 +102,6 @@ func downloadCsvFile(w http.ResponseWriter, _ *http.Request) {
 }
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		return
-	}
-
 	router := mux.NewRouter()
 	router.HandleFunc("/", HomeHandler)
 	router.HandleFunc("/api/scrape", updateHouses).Methods("POST")
@@ -121,7 +115,7 @@ func main() {
 		Handler: router,
 	}
 	log.Println("Listening....")
-	err = server.ListenAndServe()
+	err := server.ListenAndServe()
 	if err != nil {
 		return
 	}
